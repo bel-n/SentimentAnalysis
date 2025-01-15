@@ -1,6 +1,6 @@
+
 package com.sentiment.analysis;
 
-import org.eclipse.jetty.util.log.Log;
 import util.LogLevel;
 import util.Logger;
 
@@ -27,7 +27,7 @@ public class ReviewDS {
         while(!reviews.isEmpty()) {
             String review = reviews.remove(0); //take the first review
             String sentiment = pipeline.analyzeSentiment(review);
-            Logger.log("Sentiment of the review" + sentiment, LogLevel.Success);
+            Logger.log("Sentiment of the review: " + sentiment, LogLevel.Success);
         }
         /*for (String review : reviews) {
             String sentiment = pipeline.analyzeSentiment(review);
