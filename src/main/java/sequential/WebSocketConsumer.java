@@ -1,5 +1,5 @@
 
-package com.sentiment.analysis;
+package sequential;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,8 +7,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.websocket.*;
 import javax.websocket.Session;
 
-import org.eclipse.jetty.util.log.Log;
-import org.glassfish.tyrus.client.ClientManager;
 import util.LogLevel;
 import util.Logger;
 

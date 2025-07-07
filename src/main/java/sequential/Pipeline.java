@@ -1,5 +1,5 @@
 
-package com.sentiment.analysis;
+package sequential;
 
 
 import edu.stanford.nlp.pipeline.*;
