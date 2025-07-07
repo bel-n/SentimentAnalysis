@@ -6,9 +6,7 @@ import edu.stanford.nlp.pipeline.*;
 
 import java.io.IOException;
 import java.util.*;
-//i need the properties class from here to store  and manage the
-//config. settings that will influence the behaviour of the tools
-//k-v pairs for specific settings
+
 
 public class Pipeline {
 
@@ -28,7 +26,6 @@ public class Pipeline {
 
         if (!coreDocument.sentences().isEmpty()) {
             CoreSentence sentence = coreDocument.sentences().get(0);
-            //System.out.println("Sentiment: " + sentence.sentiment());  // Debugging statement
             return sentence.sentiment();
         }
         return "Unknown";

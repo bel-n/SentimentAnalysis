@@ -6,11 +6,12 @@ public class Logger {
 
     public static final String RESET = "\u001B[0m";
     public static final String ERROR = "\u001B[31m";
-    public static final String WARN = "\u001B[32m";
     public static final String INFO = "\u001B[33m";
-    public static final String SUCCESS = "\u001B[34m";
-    public static final String DEBUG = "\u001B[35m";
+    public static final String SUCCESS ="\u001B[32m";
+    public static final String SUCCESSsub ="\u001B[32m";
+    public static final String UPDATE = "\u001B[35m";
     public static final String STATUS = "\u001B[36m";
+    public static final String SUBSCRIPTIONUPDATE = "\u001B[36m";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     public static void log(String msg, LogLevel level) {
@@ -20,11 +21,12 @@ public class Logger {
 
         switch (level) {
             case Info -> messagePrefix = INFO + messagePrefix + RESET;
-            case Warn -> messagePrefix = WARN + messagePrefix + RESET;
             case Error -> messagePrefix = ERROR + messagePrefix + RESET;
-            case Debug -> messagePrefix = DEBUG + messagePrefix + RESET;
+            case Update -> messagePrefix = UPDATE + messagePrefix + RESET;
             case Status -> messagePrefix = STATUS + messagePrefix + RESET;
             case Success -> messagePrefix = SUCCESS + messagePrefix + RESET;
+            case SubscriptionUpdate -> messagePrefix = SUBSCRIPTIONUPDATE + messagePrefix + RESET;
+            case SuccessfulSubscription -> messagePrefix = SUCCESSsub + messagePrefix + RESET;
         }
 
         System.out.println(messagePrefix + msg);

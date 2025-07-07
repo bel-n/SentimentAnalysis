@@ -29,10 +29,6 @@ public class ReviewDS {
             String sentiment = pipeline.analyzeSentiment(review);
             Logger.log("Sentiment of the review: " + sentiment, LogLevel.Success);
         }
-        /*for (String review : reviews) {
-            String sentiment = pipeline.analyzeSentiment(review);
-            Logger.log("Sentiment of the review: " + sentiment, LogLevel.Success);
 
-        }*/
     }
 }

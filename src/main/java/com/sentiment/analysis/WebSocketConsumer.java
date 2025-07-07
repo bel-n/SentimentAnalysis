@@ -24,11 +24,11 @@ public class WebSocketConsumer {
     private static final String[] TOPICS = {
             "movies",
             "electronics",
-           /* "music",
+            "music",
            "toys",
             "pet-supplies",
             "automotive",
-            "sport"*/
+            "sport"
     };
 
     private final AtomicBoolean subscribeFlag = new AtomicBoolean(false);
@@ -44,7 +44,7 @@ public class WebSocketConsumer {
     public void onOpen(Session session) throws IOException {
         this.session = session;
         Logger.log("Established a connection!",LogLevel.Success);
-        Logger.log("Session ID: " + session.getId(), LogLevel.Debug);
+        Logger.log("Session ID: " + session.getId(), LogLevel.Update);
 
     }
 
@@ -54,17 +54,16 @@ public class WebSocketConsumer {
     @OnMessage
     public void onMessage(String message,Session session) {
         try{
-            Logger.log("Message received" +message, LogLevel.Debug);
+       //  Logger.log("Message received" +message, LogLevel.Update);
             //check server
-            if (!subscribeFlag.get() /*&& "Welcome to the Amazon Reviews WebSocket Server.".equalsIgnoreCase(message.trim())*/){
-                Logger.log("Sever ready. Subscribing to topics...",LogLevel.Info);
+            if (!subscribeFlag.get()){
+                Logger.log("Sever ready. Subscribing to topics...",LogLevel.SubscriptionUpdate);
                 subscribeFlag.set(true);
-                Logger.log("Received 'Welcome' message. Subscribing to topics now", LogLevel.Debug);
                 subscribeToTopics();
 
             }else if(subscribeFlag.get()){
                 reviewDS.addReview(message);
-                Logger.log("Message received." + message,LogLevel.Info);
+                Logger.log("Message received." + message,LogLevel.Update);
                 reviewDS.processReviewsSequentially(pipeline);
             }
         }catch(Exception e){
@@ -78,11 +77,11 @@ public class WebSocketConsumer {
         for(String topic: TOPICS){
             try{
                 String subscribeMessage = "topic:" + topic;
-                Logger.log("Subscribing to topic: " + topic,LogLevel.Debug);
+                Logger.log("Subscribing to topic: " + topic,LogLevel.SubscriptionUpdate);
 
                 if(session != null && session.isOpen()){
                     session.getBasicRemote().sendText(subscribeMessage);
-                    Logger.log("Subscribed to topic:" + topic,LogLevel.Success);
+                    Logger.log("Subscribed to topic: " + topic,LogLevel.SuccessfulSubscription);
                 }else{
                     Logger.log("Session not open. Unable to subscribe to topic:" + topic,LogLevel.Error);
                 }
@@ -95,18 +94,9 @@ public class WebSocketConsumer {
         }
     }
 
-
-
     @OnClose
     public void onClose(Session session) {
         Logger.log("Closed a connection!",LogLevel.Error);
-
-      /*  try{
-            reviewDS.processReviews(pipeline);
-        } catch (Exception e) {
-            Logger.log("Error closing reviews", LogLevel.Error);
-            e.printStackTrace();
-        }*/
 
     }
 

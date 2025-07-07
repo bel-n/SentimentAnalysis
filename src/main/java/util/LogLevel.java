@@ -1,10 +1,11 @@
 package util;
 
 public enum LogLevel {
-    Warn,
     Error,
     Info,
-    Debug,
     Status,
     Success,
+    Update,
+    SubscriptionUpdate, SuccessfulSubscription,
+
 }
