@@ -21,7 +21,6 @@ public class ReviewDS {
     public List<String> getReviews() {
         return reviews;
     }
-
     public void processReviewsSequentially(Pipeline pipeline) {
 
         while(!reviews.isEmpty()) {

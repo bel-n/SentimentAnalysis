@@ -106,7 +106,6 @@ public class WebSocketConsumer {
 
         throwable.printStackTrace();
     }
-
     public static void main(String[] args) {
         try {
             URI uri = new URI("wss://prog3.student.famnit.upr.si/sentiment");

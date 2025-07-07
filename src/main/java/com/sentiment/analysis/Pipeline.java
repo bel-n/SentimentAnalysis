@@ -18,7 +18,6 @@ public class Pipeline {
 
         this.pipeline = new StanfordCoreNLP(props);
     }
-
     public String analyzeSentiment(String review) {
         Annotation annotation = new Annotation(review);
         this.pipeline.annotate(annotation);
@@ -30,8 +29,7 @@ public class Pipeline {
         }
         return "Unknown";
     }
-
-
+    
     public Map<String,String> analyzeSentiments(List<String> reviews){
         Map<String,String> results = new HashMap<>();
         for (String review : reviews){
