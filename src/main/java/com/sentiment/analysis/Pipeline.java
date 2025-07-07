@@ -7,7 +7,6 @@ import edu.stanford.nlp.pipeline.*;
 import java.io.IOException;
 import java.util.*;
 
-
 public class Pipeline {
 
     private final StanfordCoreNLP pipeline;
