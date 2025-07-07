@@ -29,7 +29,7 @@ public class Pipeline {
         }
         return "Unknown";
     }
-    
+
     public Map<String,String> analyzeSentiments(List<String> reviews){
         Map<String,String> results = new HashMap<>();
         for (String review : reviews){
