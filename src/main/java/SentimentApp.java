@@ -4,9 +4,8 @@ import java.util.Scanner;
 
 public class SentimentApp {
     public static void main(String[] args) {
-
         String mode;
-        if (args.length == 0 ) {
+        if (args.length == 0) {
             System.out.println("Please specify a mode: " + " sequential, parallel or distributed");
             Scanner scanner = new Scanner(System.in);
             mode = scanner.nextLine().toLowerCase();
@@ -14,7 +13,6 @@ public class SentimentApp {
         }else {
             mode = args[0].toLowerCase();
         }
-
         switch (mode){
             case "sequential":
                 WebSocketConsumer.main(new String[]{});

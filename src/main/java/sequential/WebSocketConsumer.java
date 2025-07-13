@@ -46,8 +46,6 @@ public class WebSocketConsumer {
 
     }
 
-
-
     //storing the messages in the data structure
     @OnMessage
     public void onMessage(String message,Session session) {
