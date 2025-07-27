@@ -12,7 +12,8 @@ public class PipelineParallel {
 
     public PipelineParallel() {
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, pos,lemma,ner,parse,sentiment");
+        props.setProperty("annotators","tokenize,ssplit,pos,parse,sentiment");
+        //props.setProperty("annotators", "tokenize, ssplit, pos,lemma,ner,parse,sentiment");
         props.setProperty("threadsafe", "true");
 
         this.pipeline = new StanfordCoreNLP(props);

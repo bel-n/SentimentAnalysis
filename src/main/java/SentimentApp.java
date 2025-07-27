@@ -1,9 +1,10 @@
 import  sequential.WebSocketConsumer;
+import parallel.WebSocketConsumerParallel;
 
 import java.util.Scanner;
 
 public class SentimentApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String mode;
         if (args.length == 0) {
             System.out.println("Please specify a mode: " + " sequential, parallel or distributed");
@@ -18,7 +19,7 @@ public class SentimentApp {
                 WebSocketConsumer.main(new String[]{});
                 break;
                 case "parallel":
-                    System.out.println("Parallel mode not implemented yet");
+                    WebSocketConsumerParallel.main(new String[]{});
                     break;
             case "distributed":
                 System.out.println("Distributed mode not implemented yet");
