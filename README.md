@@ -40,7 +40,3 @@ The system can be executed in **sequential** or **parallel** mode, allowing perf
 ##  Execution Modes
 
 You can choose between **Sequential** and **Parallel** execution modes through the `SentimentApp` main class.
-
-### Run Sequential Mode
-```bash
-java -cp target/SentimentAnalysis.jar SentimentApp sequential
