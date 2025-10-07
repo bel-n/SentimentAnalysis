@@ -1,6 +1,6 @@
-# 🧠 Amazon Review Sentiment Analysis Tool
+# Amazon Review Sentiment Analysis Tool
 
-## 📋 Project Overview
+## Project Overview
 In vast marketplaces like **Amazon**, customer reviews are an invaluable source of feedback for consumers, manufacturers, and the platform itself. However, as the volume of reviews grows, analyzing them in real-time becomes computationally demanding.
 
 This project implements a **high-performance sentiment analysis tool** that consumes live review streams from a **WebSocket-based API** and classifies their sentiments using the **Stanford CoreNLP** library.
@@ -9,7 +9,7 @@ The system can be executed in **sequential** or **parallel** mode, allowing perf
 
 ---
 
-## ⚙️ Features
+## Features
 - **WebSocket Integration:** Connects to a live review stream at a server provided by my faculty.
 - **Real-Time Processing:** Subscribes to multiple product topics (movies, electronics, music, toys, etc.)
 - **Sentiment Analysis:** Uses [Stanford CoreNLP](https://nlp.stanford.edu/software/corenlp.shtml) to determine the sentiment of each review.
@@ -21,23 +21,23 @@ The system can be executed in **sequential** or **parallel** mode, allowing perf
 
 ---
 
-## 🧩 Architecture
+##  Architecture
 
-### 🕸️ WebSocket Consumers
+###  WebSocket Consumers
 - `sequential.WebSocketConsumer`: Connects to the WebSocket server and processes reviews sequentially.
 - `parallel.WebSocketConsumerParallel`: Connects to the same server and processes reviews concurrently using threads.
 
-### 📦 Data Structures
+### Data Structures
 - **Sequential (`ReviewDS`)**: Stores reviews in a list and processes them one by one.
 - **Parallel (`ParallelReviewDS`)**: Uses a `BlockingQueue` and `ThreadPoolExecutor` to distribute sentiment analysis tasks across worker threads.
 
-### 🔍 NLP Pipeline
+###  NLP Pipeline
 - **Sequential (`Pipeline`)** and **Parallel (`PipelineParallel`)** wrap the Stanford CoreNLP sentiment analysis engine.
 - The parallel version is configured as thread-safe to allow concurrent access.
 
 ---
 
-## 🧵 Execution Modes
+##  Execution Modes
 
 You can choose between **Sequential** and **Parallel** execution modes through the `SentimentApp` main class.
 
