@@ -10,8 +10,7 @@ The system can be executed in **sequential** or **parallel** mode, allowing perf
 ---
 
 ## ⚙️ Features
-- **WebSocket Integration:** Connects to a live review stream at  
-  `wss://prog3.student.famnit.upr.si/sentiment`
+- **WebSocket Integration:** Connects to a live review stream at a server provided by my faculty.
 - **Real-Time Processing:** Subscribes to multiple product topics (movies, electronics, music, toys, etc.)
 - **Sentiment Analysis:** Uses [Stanford CoreNLP](https://nlp.stanford.edu/software/corenlp.shtml) to determine the sentiment of each review.
 - **Sequential & Parallel Modes:**
