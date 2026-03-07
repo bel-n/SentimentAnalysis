@@ -1,58 +1,43 @@
 package parallel;
 
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import org.eclipse.jetty.util.log.Log;
-import util.LogLevel;
-import util.Logger;
-
-import java.util.Properties;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+import util.LogLevel;
+import util.Logger;
+
 public class ParallelReviewDS2 {
 
-    private final ExecutorService executor;
-    private final PipelineParallel pipeline;
+    private final Queue<String> reviewQueue = new LinkedList<>();
 
-    private final AtomicInteger activeTasks = new AtomicInteger(0);
+    private final ThreadLocal<PipelineParallel> pipleline = ThreadLocal.withInitial(() -> new PipelineParallel());
 
-    public ParallelReviewDS2() {
-        int cores = Runtime.getRuntime().availableProcessors();
-        int threads = Math.max(1, cores - 1);
+    private final int maxThreads;
 
-        this.executor = new ThreadPoolExecutor(threads, threads,0L, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(50), new ThreadPoolExecutor.CallerRunsPolicy());
+    private volatile boolean running = true;
 
-        this.pipeline = new PipelineParallel();
+    private final AtomicInteger totalProcessed = new AtomicInteger(0);
 
-        Logger.log("ParallelReviewDS started with" + threads + "threads", LogLevel.Update);
-    }
+    private final long startTime = System.currentTimeMillis();
 
-    public void handleInput(String review){
-        executor.execute(() -> processReview(review));
-    }
 
-    public void processReview (String review){
-        activeTasks.incrementAndGet();
 
-        try {
-            String sentiment = pipeline.analyzeSentiment(review);
-            Logger.log("Review:" + review +"\nSentiment:" + sentiment, LogLevel.Success);
-        }
-        finally {
-            activeTasks.decrementAndGet();
-        }
-    }
 
-    public void shutdown() {
-        Logger.log("Shutting down executor...", LogLevel.Update);
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
-                executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
-    }
+
+public ParallelReviewDS2(){
+    int cores = Runtime.getRuntime().availableProcessors();
+    long maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+
+    int maxThreadsByMemory = (int)(maxMemoryMB / 500);
+    int maxThreadsByCores = cores - 1;
+
+    this.maxThreads = Math.max(1, Math.min(maxThreadsByCores, maxThreadsByMemory));
+
+    Logger.log("Hardware:" + cores + " cores," + maxMemoryMB + "MB RAM ->" + maxThreads + "threads", LogLevel.Update);
+
+    // startWorkers();
+}
 }
