@@ -14,7 +14,7 @@ import parallel.ParallelReviewDS;
 @ClientEndpoint
 public class WebSocketConsumerParallel {
 
-    private final ParallelReviewDS parallelReviewDS;
+    private final ParallelReviewDS2 parallelReviewDS2;
 
     private Session session = null;
 
@@ -32,7 +32,7 @@ public class WebSocketConsumerParallel {
     private final AtomicBoolean subscribeFlag = new AtomicBoolean(false);
 
     public WebSocketConsumerParallel() {
-        this.parallelReviewDS = new ParallelReviewDS();
+        this.parallelReviewDS2 = new ParallelReviewDS2();
 
     }
 
@@ -51,7 +51,7 @@ public class WebSocketConsumerParallel {
         /*if(message.startsWith("ERROR")){
             System.err.println("Server error"+message);
         }*/
-        parallelReviewDS.handleInput(message);
+        parallelReviewDS2.handleInput(message);
 
 
     }
@@ -75,7 +75,7 @@ public class WebSocketConsumerParallel {
     private void reconnect() {
         System.out.println("Attempting to reconnect...");
         try {
-            Thread.sleep(5000); // Wait before reconnecting
+            Thread.sleep(5000); // Wait before reconnectinga
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, new URI("wss://prog3.student.famnit.upr.si/sentiment"));
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class WebSocketConsumerParallel {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Logger.log("Shutting down ...", LogLevel.Update);
-            consumer.parallelReviewDS.shutdown();
+            consumer.parallelReviewDS2.shutdown();
         }));
 
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();

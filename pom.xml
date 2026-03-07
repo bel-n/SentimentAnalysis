@@ -60,6 +60,13 @@
             <version>2.2.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>mpj</groupId>
+            <artifactId>mpj</artifactId>
+            <version>0.44</version>
+            <scope>system</scope>
+            <systemPath>C:/mpjexpress/lib/mpj.jar</systemPath>
+        </dependency>
     </dependencies>
 
 

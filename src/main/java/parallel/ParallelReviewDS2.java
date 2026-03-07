@@ -2,7 +2,6 @@ package parallel;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -13,7 +12,7 @@ public class ParallelReviewDS2 {
 
     private final Queue<String> reviewQueue = new LinkedList<>();
 
-    private final ThreadLocal<PipelineParallel> pipleline = ThreadLocal.withInitial(() -> new PipelineParallel());
+    private final ThreadLocal<PipelineParallel> pipeline = ThreadLocal.withInitial(PipelineParallel::new);
 
     private final int maxThreads;
 
@@ -30,14 +29,14 @@ public class ParallelReviewDS2 {
         int cores = Runtime.getRuntime().availableProcessors();
         long maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024);
 
-        int maxThreadsByMemory = (int) (maxMemoryMB / 500);
-        int maxThreadsByCores = cores - 1;
+        int maxThreadsByMemory = (int)(maxMemoryMB / 500) - 3;
+        int maxThreadsByCores = cores - 3;
 
-        this.maxThreads = Math.max(1, cores - 3);
-
+        this.maxThreads = Math.max(1, Math.min(maxThreadsByMemory, maxThreadsByCores));
         this.workers = new Thread[maxThreads];
 
-        Logger.log("Hardware:" + cores + " cores," + maxMemoryMB + "MB RAM ->" + maxThreads + "threads", LogLevel.Update);
+        Logger.log("Hardware: " + cores + " cores, " + maxMemoryMB + "MB RAM → "
+                + maxThreads + " worker threads", LogLevel.Update);
 
         startWorkers();
     }
@@ -62,7 +61,7 @@ public class ParallelReviewDS2 {
                         review = reviewQueue.poll();
                     }
                     if (review != null) {
-                       // processReview(review);
+                       processReview(review);
                     }
                 }
             });
@@ -74,9 +73,51 @@ public class ParallelReviewDS2 {
     }
 
     public void handleInput(String review) {
+
+        if (review.startsWith("Welcome")) return;
+
         synchronized (reviewQueue) {
             reviewQueue.add(review);
             reviewQueue.notify();
         }
+    }
+
+
+    private void processReview(String review) {
+        String input = review.length() > 500 ? review.substring(0, 500) : review;
+
+        String sentiment = pipeline.get().analyzeSentiment(input);
+
+        int total = totalProcessed.incrementAndGet();
+        long elapsed = System.currentTimeMillis() - startTime;
+        double throughput = total / (elapsed / 1000.0);
+
+        Logger.log("[" + Thread.currentThread().getName() + "]"
+                + "\nReview: " + input
+                + "\nSentiment: " + sentiment
+                + "\nThroughput: " + String.format("%.2f", throughput) + " reviews/sec"
+                + " | Total: " + total, LogLevel.Success);
+    }
+
+
+    public void shutdown() {
+        running = false;
+
+        synchronized (reviewQueue) {
+            reviewQueue.notifyAll();
+        }
+
+        for (Thread worker : workers) {
+            try {
+                worker.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        Logger.log("All workers finished. Final throughput: " +
+                String.format("%.2f", totalProcessed.get() /
+                        ((System.currentTimeMillis() - startTime) / 1000.0))
+                + " reviews/sec | Total processed: " + totalProcessed.get(), LogLevel.Update);
     }
 }
