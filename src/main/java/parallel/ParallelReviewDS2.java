@@ -72,4 +72,11 @@ public class ParallelReviewDS2 {
 
         }
     }
+
+    public void handleInput(String review) {
+        synchronized (reviewQueue) {
+            reviewQueue.add(review);
+            reviewQueue.notify();
+        }
+    }
 }
