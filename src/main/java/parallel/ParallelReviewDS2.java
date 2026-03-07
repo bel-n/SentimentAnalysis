@@ -17,6 +17,8 @@ public class ParallelReviewDS2 {
 
     private final int maxThreads;
 
+    private final Thread[] workers;
+
     private volatile boolean running = true;
 
     private final AtomicInteger totalProcessed = new AtomicInteger(0);
@@ -24,20 +26,50 @@ public class ParallelReviewDS2 {
     private final long startTime = System.currentTimeMillis();
 
 
+    public ParallelReviewDS2() {
+        int cores = Runtime.getRuntime().availableProcessors();
+        long maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024);
 
+        int maxThreadsByMemory = (int) (maxMemoryMB / 500);
+        int maxThreadsByCores = cores - 1;
 
+        this.maxThreads = Math.max(1, cores - 3);
 
-public ParallelReviewDS2(){
-    int cores = Runtime.getRuntime().availableProcessors();
-    long maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        this.workers = new Thread[maxThreads];
 
-    int maxThreadsByMemory = (int)(maxMemoryMB / 500);
-    int maxThreadsByCores = cores - 1;
+        Logger.log("Hardware:" + cores + " cores," + maxMemoryMB + "MB RAM ->" + maxThreads + "threads", LogLevel.Update);
 
-    this.maxThreads = Math.max(1, Math.min(maxThreadsByCores, maxThreadsByMemory));
+        startWorkers();
+    }
 
-    Logger.log("Hardware:" + cores + " cores," + maxMemoryMB + "MB RAM ->" + maxThreads + "threads", LogLevel.Update);
+    private void startWorkers() {
+        for (int i = 0; i < maxThreads; i++) {
+            workers[i] = new Thread(() -> {
+                while (running) {
+                    String review = null;
 
-    // startWorkers();
-}
+                    synchronized (reviewQueue) {
+                        while(reviewQueue.isEmpty() && running) {
+                            try{
+                                reviewQueue.wait();
+
+                            }catch(InterruptedException e){
+                                Thread.currentThread().interrupt();
+                                return;
+                            }
+                        }
+                        if(!running) return;
+                        review = reviewQueue.poll();
+                    }
+                    if (review != null) {
+                       // processReview(review);
+                    }
+                }
+            });
+
+            workers[i].setName("Worker - " + i );
+            workers[i].start();
+
+        }
+    }
 }
