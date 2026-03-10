@@ -45,7 +45,7 @@ public class ParallelReviewDS2 {
         for (int i = 0; i < maxThreads; i++) {
             workers[i] = new Thread(() -> {
                 while (running) {
-                    String review = null;
+                    String review;
 
                     synchronized (reviewQueue) {
                         while(reviewQueue.isEmpty() && running) {
@@ -69,15 +69,12 @@ public class ParallelReviewDS2 {
             workers[i].setName("Worker - " + i );
             workers[i].start();
 
+
         }
     }
 
     public void handleInput(String review) {
 
-        /*if (review.startsWith("Review: ")) {
-            Logger.log("Welcome message accepted", LogLevel.Update);
-            return;
-        }*/
         if (!review.startsWith("{")) return;
 
         synchronized (reviewQueue) {

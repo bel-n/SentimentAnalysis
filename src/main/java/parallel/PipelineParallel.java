@@ -25,7 +25,7 @@ public class PipelineParallel {
         try{
             Annotation annotation = new Annotation(review);
             this.pipeline.annotate(annotation);
-            //document object
+
             CoreDocument coreDocument  = new CoreDocument(annotation);
             List<CoreSentence> sentences = coreDocument.sentences();
 
@@ -45,10 +45,6 @@ public class PipelineParallel {
                     .max(Map.Entry.comparingByValue())
                     .get()
                     .getKey();
-           /* if(!coreDocument.sentences().isEmpty()){
-                CoreSentence sentence = coreDocument.sentences().get(0);
-                return sentence.sentiment();
-            }*/
 
         }catch (Exception e){
             System.err.println("Error analyzing sentiment: " + e.getMessage());

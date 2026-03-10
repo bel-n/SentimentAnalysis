@@ -9,8 +9,6 @@ import javax.websocket.Session;
 import util.LogLevel;
 import util.Logger;
 
-import parallel.ParallelReviewDS;
-
 @ClientEndpoint
 public class WebSocketConsumerParallel {
 
@@ -18,8 +16,7 @@ public class WebSocketConsumerParallel {
 
     private Session session = null;
 
-    private static final String[] TOPICS_PARALLEL = {  //i would parallelize this
-            //in the case of having really high number of topics to subscribe to
+    private static final String[] TOPICS_PARALLEL = {
             "movies",
             "electronics",
             "music",
@@ -45,14 +42,10 @@ public class WebSocketConsumerParallel {
         subscribeToTopics();
     }
 
-    //OnMessage means we will be storing the messages in the thread pool once a message is received
     @OnMessage
     public void onMessage(String message) {
-        /*if(message.startsWith("ERROR")){
-            System.err.println("Server error"+message);
-        }*/
-        parallelReviewDS2.handleInput(message);
 
+        parallelReviewDS2.handleInput(message);
 
     }
 
