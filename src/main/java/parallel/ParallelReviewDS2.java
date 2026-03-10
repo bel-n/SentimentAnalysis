@@ -29,7 +29,7 @@ public class ParallelReviewDS2 {
         int cores = Runtime.getRuntime().availableProcessors();
         long maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024);
 
-        int maxThreadsByMemory = (int)(maxMemoryMB / 500) - 3;
+        int maxThreadsByMemory = (int)(maxMemoryMB / 500) - 4;
         int maxThreadsByCores = cores - 3;
 
         this.maxThreads = Math.max(1, Math.min(maxThreadsByMemory, maxThreadsByCores));
@@ -96,17 +96,28 @@ public class ParallelReviewDS2 {
             input = review;
         }
 
-        String sentiment = pipeline.get().analyzeSentiment(input);
+        try{
+            String sentiment = pipeline.get().analyzeSentiment(input);
 
-        int total = totalProcessed.incrementAndGet();
-        long elapsed = System.currentTimeMillis() - startTime;
-        double throughput = total / (elapsed / 1000.0);
+            int total = totalProcessed.incrementAndGet();
+            long elapsed = System.currentTimeMillis() - startTime;
+            double throughput = total / (elapsed / 1000.0);
 
-        Logger.log("[" + Thread.currentThread().getName() + "]"
-                + "\nReview: " + input
-                + "\nSentiment: " + sentiment
-                + "\nThroughput: " + String.format("%.2f", throughput) + " reviews/sec"
-                + " | Total: " + total, LogLevel.Success);
+            Logger.log("[" + Thread.currentThread().getName() + "]"
+                    + "\nReview: " + input
+                    + "\nSentiment: " + sentiment
+                    + "\nThroughput: " + String.format("%.2f", throughput) + " reviews/sec"
+                    + " | Total: " + total, LogLevel.Success);
+        }catch (OutOfMemoryError e){
+            Logger.log("[" + Thread.currentThread().getName() + "] OOM on review... THIS REVIEW WILL BE SKIPPED.", LogLevel.Error);
+            System.gc();
+            try{
+                Thread.sleep(2000);
+            }catch (InterruptedException e2){
+                Thread.currentThread().interrupt();
+            }
+        }
+
     }
 
 
