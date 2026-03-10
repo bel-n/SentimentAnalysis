@@ -74,7 +74,11 @@ public class ParallelReviewDS2 {
 
     public void handleInput(String review) {
 
-        if (review.startsWith("Welcome")) return;
+        /*if (review.startsWith("Review: ")) {
+            Logger.log("Welcome message accepted", LogLevel.Update);
+            return;
+        }*/
+        if (!review.startsWith("{")) return;
 
         synchronized (reviewQueue) {
             reviewQueue.add(review);
@@ -84,7 +88,13 @@ public class ParallelReviewDS2 {
 
 
     private void processReview(String review) {
-        String input = review.length() > 500 ? review.substring(0, 500) : review;
+
+        String input;
+        if(review.length() > 300){
+            input = review.substring(0, 300);
+        }else{
+            input = review;
+        }
 
         String sentiment = pipeline.get().analyzeSentiment(input);
 
