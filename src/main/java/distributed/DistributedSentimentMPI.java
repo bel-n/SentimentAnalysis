@@ -4,7 +4,7 @@ import mpi.*;
 import util.LogLevel;
 import util.Logger;
 
-public class DistributedSentimentAPI {
+public class DistributedSentimentMPI {
      public static void main(String[] args){
          MPI.Init(args);
 
