@@ -17,7 +17,14 @@ public class DistributedSentimentMPI {
 
          MPI.Finalize();
 
-
-
      }
+
+     private static void startDispatcher(){}
+
+    private static void startWorkersMPI(){}
+
+    private static void DispatcherWebSocketClient(){}
+
+
+
 }
