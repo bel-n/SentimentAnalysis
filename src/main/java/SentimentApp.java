@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class SentimentApp {
     public static void main(String[] args) throws Exception {
         String mode;
-        // Keep the scanner open for the duration of the app
         Scanner scanner = new Scanner(System.in);
 
         if (args.length == 0) {
@@ -24,17 +23,15 @@ public class SentimentApp {
                 break;
             case "distributed":
                 System.out.println("Distributed mode not implemented yet");
-                return; // Exit early since nothing to wait for
+                return;
             default:
                 System.out.println("Unknown mode");
                 return;
         }
 
-        // IMPORTANT: Prevent SentimentApp from exiting.
-        // This keeps the WebSocket threads alive.
+
         System.out.println(">>> Sentiment Analysis is running.");
 
-        // This loop keeps the main thread occupied
         while (true) {
             Thread.sleep(10000);
         }
