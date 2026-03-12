@@ -33,7 +33,7 @@ public class WebSocketConsumerDistributed {
 
         for (String topic : TOPICS) {
             try{
-                session.getBasicRemote().sendText(topic);
+                session.getBasicRemote().sendText("topic:" + topic);
                 Logger.log("Subscribed to: " + topic, LogLevel.Update);
             }catch (Exception e){
                 Logger.log("Failed to subscribe to: " + topic, LogLevel.Error);
@@ -43,15 +43,16 @@ public class WebSocketConsumerDistributed {
 
 
     @OnMessage
+
     public void onMessage(String message) {
-        if(!message.startsWith("{")) return;
-        try{
+        if (!message.startsWith("{")) return;
+        try {
+            //Logger.log("Review added to queue", LogLevel.Update);
             reviewQueue.put(message);
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
-
 
 
 

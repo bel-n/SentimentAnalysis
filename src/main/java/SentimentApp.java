@@ -1,3 +1,4 @@
+import distributed.DistributedSentimentMPI;
 import sequential.WebSocketConsumer;
 import parallel.WebSocketConsumerParallel;
 import java.util.Scanner;
@@ -11,7 +12,7 @@ public class SentimentApp {
             System.out.println("Please specify a mode: sequential, parallel or distributed");
             mode = scanner.nextLine().toLowerCase();
         } else {
-            mode = args[0].toLowerCase();
+            mode = args[args.length - 1].toLowerCase();
         }
 
         switch (mode) {
@@ -22,7 +23,7 @@ public class SentimentApp {
                 WebSocketConsumerParallel.main(new String[]{});
                 break;
             case "distributed":
-                System.out.println("Distributed mode not implemented yet");
+                DistributedSentimentMPI.main(args);
                 return;
             default:
                 System.out.println("Unknown mode");
