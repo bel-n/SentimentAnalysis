@@ -12,7 +12,7 @@ import util.Logger;
 @ClientEndpoint
 public class WebSocketConsumerParallel {
 
-    private final ParallelReviewDS2 parallelReviewDS2;
+    private final ParallelReviewDS3 parallelReviewDS3;
 
     private Session session = null;
 
@@ -28,8 +28,8 @@ public class WebSocketConsumerParallel {
 
     private final AtomicBoolean subscribeFlag = new AtomicBoolean(false);
 
-    public WebSocketConsumerParallel() {
-        this.parallelReviewDS2 = new ParallelReviewDS2();
+    public WebSocketConsumerParallel() throws InterruptedException {
+        this.parallelReviewDS3 = new ParallelReviewDS3();
 
     }
 
@@ -45,7 +45,7 @@ public class WebSocketConsumerParallel {
     @OnMessage
     public void onMessage(String message) {
 
-        parallelReviewDS2.handleInput(message);
+        parallelReviewDS3.handleInput(message);
 
     }
 
@@ -82,7 +82,7 @@ public class WebSocketConsumerParallel {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Logger.log("Shutting down ...", LogLevel.Update);
-            consumer.parallelReviewDS2.shutdown();
+            consumer.parallelReviewDS3.shutdown();
         }));
 
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();

@@ -35,7 +35,6 @@ public class ParallelReviewDS {
         /*
             I am using 6 - 11 threads because i need some free cores for:
             -garbage collection, websocket thread, system processes...
-            -This also prevents over saturation and
          */
         this.executorService = new ThreadPoolExecutor(
                 6  ,
