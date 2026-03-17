@@ -9,7 +9,6 @@ public class Pipeline {
 
     public Pipeline() {
         Properties props = new Properties();
-        // Reduced annotators to just the ones needed for sentiment to speed it up
         props.setProperty("annotators", "tokenize, ssplit, pos, parse, sentiment");
         this.pipeline = new StanfordCoreNLP(props);
     }

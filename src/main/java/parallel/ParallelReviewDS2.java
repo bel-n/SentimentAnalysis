@@ -13,11 +13,6 @@ public class ParallelReviewDS2 {
     private final Queue<String> reviewQueue = new LinkedList<>();
 
 
-    //with big streams of reviews the initialization of a pipeline per thread causes oom error because of the huge
-    //amount of objects that the initialization creates
-    //it would work ideally if the stream of reviews was constant and slower such that
-    //the GC will be able to clean between analyses
-
     private final ThreadLocal<PipelineParallel> pipeline = ThreadLocal.withInitial(PipelineParallel::new);
 
     private final int maxThreads;

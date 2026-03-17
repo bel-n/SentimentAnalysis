@@ -130,6 +130,9 @@ public class ParallelReviewDS3 {
 
             Logger.log("Sentiment: " + sentiment, LogLevel.Sentiment);
 
+            Logger.log("Throughput: " + String.format("%.2f", throughput) + " reviews/sec"
+                    + " | Total: " + totalProcessed, LogLevel.Success);
+
 
 
         }catch (OutOfMemoryError e){

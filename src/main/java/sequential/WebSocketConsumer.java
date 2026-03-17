@@ -31,12 +31,11 @@ public class WebSocketConsumer {
         Logger.log("Established a connection!", LogLevel.Success);
         Logger.log("Session ID: " + session.getId(), LogLevel.Update);
 
-        // Some servers close the connection if you don't send something immediately
-        // or if you send it TOO fast before the handshake state is updated.
+
         try {
             Thread.sleep(100);
             if(session.isOpen()) {
-                session.getBasicRemote().sendText("ready"); // Tell the server you are ready
+                session.getBasicRemote().sendText("ready");
                 Logger.log("Sent 'ready' signal to server.", LogLevel.Info);
             }
         } catch (Exception e) {
@@ -68,10 +67,7 @@ public class WebSocketConsumer {
                 subscribeFlag.set(true);
                 subscribeToTopics();
             } else {
-                // Sequential processing:
-                // We add it to the list and process it immediately.
                 reviewDS.addReview(message);
-                Logger.log("Message received. Processing...", LogLevel.Update);
                 reviewDS.processReviewsSequentially(pipeline);
             }
         } catch (Exception e) {
