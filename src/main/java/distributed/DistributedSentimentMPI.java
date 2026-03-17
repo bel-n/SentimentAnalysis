@@ -2,15 +2,16 @@ package distributed;
 
 import mpi.*;
 import parallel.PipelineParallel;
+import util.CleanReviews;
 import util.LogLevel;
 import util.Logger;
 
 import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import util.CleanReviews;
 
 public class DistributedSentimentMPI {
      public static void main(String[] args) throws Exception {
@@ -32,71 +33,73 @@ public class DistributedSentimentMPI {
          MPI.Finalize();
 
      }
+    private static void startDispatcher(int size) throws Exception {
 
-     private static void startDispatcher(int size) throws Exception {
+        BlockingQueue<String> reviewQueue = new LinkedBlockingQueue<>();
 
-         BlockingQueue<String> reviewQueue = new LinkedBlockingQueue<>();
+        MPI.COMM_WORLD.Barrier();
+        Logger.log("All workers are ready, connection can be established and dispatch can start...", LogLevel.Update);
 
-         MPI.COMM_WORLD.Barrier();
-         Logger.log("All workers are ready, connection can be established and dispatch can start...", LogLevel.Update);
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        container.connectToServer(
+                new WebSocketConsumerDistributed(reviewQueue),
+                new URI("wss://prog3.student.famnit.upr.si/sentiment")
+        );
 
-         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-         container.connectToServer(
-                 new WebSocketConsumerDistributed(reviewQueue),
-                 new URI("wss://prog3.student.famnit.upr.si/sentiment")
-         );
+        Logger.log("Entering dispatch loop...", LogLevel.Update);
 
+        int nextWorker = 1;
+        int totalProcessed = 0;
+        long startTime = System.currentTimeMillis();
 
+        while (true) {
+            Logger.log("Waiting for review from queue...", LogLevel.Update);
 
+            String review = reviewQueue.take();
 
-         Logger.log("Entering dispatch loop...", LogLevel.Update);
+            String reviewText = CleanReviews.extractReviewText(review);
+            String topic = CleanReviews.extractTopic(review);
+            String reviewerID = CleanReviews.extractField(review, "reviewerID");
+            String reviewerName = CleanReviews.extractField(review, "reviewerName");
+            String asin = CleanReviews.extractField(review, "asin");
 
+            String input;
+            if(reviewText.length() > 300){
+                input = reviewText.substring(0, 300);
+            }else{
+                input = reviewText;
+            }
 
-         int nextWorker = 1;
-         int totalProcessed = 0;
-         long startTime = System.currentTimeMillis();
+            Logger.log("Got review, sending to worker " + nextWorker, LogLevel.Update);
 
-         while(true){
-             Logger.log("Waiting for review from queue...", LogLevel.Update);
+            byte[] reviewBytes = input.getBytes();
+            int[] length = {reviewBytes.length};
 
-             String review = reviewQueue.take();
-             Logger.log("Got review, sending to worker " + nextWorker, LogLevel.Update); // and this
+            MPI.COMM_WORLD.Send(length, 0, 1, MPI.INT, nextWorker, 0);
+            MPI.COMM_WORLD.Send(reviewBytes, 0, reviewBytes.length, MPI.BYTE, nextWorker, 1);
 
-             if(review.length() > 300) {
-                 review = review.substring(0, 300);
-             }
-
-             byte[] reviewBytes = review.getBytes();
-             int [] length = {reviewBytes.length};
-
-             MPI.COMM_WORLD.Send(length, 0,1,MPI.INT, nextWorker,0);
-             MPI.COMM_WORLD.Send(reviewBytes,0, reviewBytes.length, MPI.BYTE, nextWorker,1);
-
-             byte[] resultBytes = new byte[32];
-             MPI.COMM_WORLD.Recv(resultBytes,0,resultBytes.length, MPI.BYTE, nextWorker,2);
+            byte[] resultBytes = new byte[32];
+            MPI.COMM_WORLD.Recv(resultBytes, 0, resultBytes.length, MPI.BYTE, nextWorker, 2);
             String sentiment = new String(resultBytes).trim();
 
-             totalProcessed++;
+            totalProcessed++;
+            long elapsed = System.currentTimeMillis() - startTime;
+            double throughput = totalProcessed / (elapsed / 1000.0);
 
-             long elapsed = System.currentTimeMillis() - startTime;
-             double throughput = totalProcessed / (elapsed / 1000);
+            Logger.log("[Dispatcher]"
+                    + "\n#" + totalProcessed + " | Time elapsed: " + (elapsed / 1000) + "s"
+                    + "\nTopic: " + topic + " | Product (ASIN): " + asin
+                    + " | Reviewer: " + reviewerName + " (" + reviewerID + ")"
+                    + "\nReview: " + input, LogLevel.Success);
 
-             Logger.log("Review: " + review
-                     + "\nSentiment: " + sentiment
-                     + "\nThroughput: " + String.format("%.2f", throughput) + " reviews/sec"
-                     + " | Total: " + totalProcessed, LogLevel.Success);
+            Logger.log("Sentiment: " + sentiment, LogLevel.Sentiment);
 
-             nextWorker++;
-             if (nextWorker >= size){
-                 nextWorker = 1;
-             }
-         }
+            Logger.log("Throughput: " + String.format("%.2f", throughput) + " reviews/sec", LogLevel.Success);
 
-
-         //should open connection to the server and subscribe
-         //review comes and like in the other parts gets put in a queue
-         //here the dispatcher will get the reviews and distribute them among processes
-     }
+            nextWorker++;
+            if (nextWorker >= size) nextWorker = 1;
+        }
+    }
 
     private static void startWorkersMPI(int rank){
         PipelineParallel pipeline = new PipelineParallel();
@@ -125,8 +128,6 @@ public class DistributedSentimentMPI {
             MPI.COMM_WORLD.Send(resultBytes,0,resultBytes.length, MPI.BYTE, 0,2);
         }
 
-         //every process should have its own pipeline
-        //the worker sends back its work to dispatcher and goes back to waiting for new review
     }
 
 

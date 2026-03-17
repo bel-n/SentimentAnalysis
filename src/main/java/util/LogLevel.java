@@ -6,6 +6,5 @@ public enum LogLevel {
     Status,
     Success,
     Update,
-    SubscriptionUpdate, SuccessfulSubscription,
-
+    Subscription_Update, Successful_Subscription,Sentiment
 }

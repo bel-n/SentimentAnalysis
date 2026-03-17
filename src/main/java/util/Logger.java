@@ -12,6 +12,7 @@ public class Logger {
     public static final String UPDATE = "\u001B[35m";
     public static final String STATUS = "\u001B[36m";
     public static final String SUBSCRIPTIONUPDATE = "\u001B[36m";
+    public static final String SENTIMENT = "\u001B[94m";;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     public static void log(String msg, LogLevel level) {
@@ -25,8 +26,9 @@ public class Logger {
             case Update -> messagePrefix = UPDATE + messagePrefix + RESET;
             case Status -> messagePrefix = STATUS + messagePrefix + RESET;
             case Success -> messagePrefix = SUCCESS + messagePrefix + RESET;
-            case SubscriptionUpdate -> messagePrefix = SUBSCRIPTIONUPDATE + messagePrefix + RESET;
-            case SuccessfulSubscription -> messagePrefix = SUCCESSsub + messagePrefix + RESET;
+            case Subscription_Update -> messagePrefix = SUBSCRIPTIONUPDATE + messagePrefix + RESET;
+            case Successful_Subscription -> messagePrefix = SUCCESSsub + messagePrefix + RESET;
+            case Sentiment -> messagePrefix = SENTIMENT + messagePrefix;
         }
 
         System.out.println(messagePrefix + msg);

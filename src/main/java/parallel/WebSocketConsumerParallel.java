@@ -38,7 +38,7 @@ public class WebSocketConsumerParallel {
         this.session = session;
         Logger.log("Established a connection!", LogLevel.Success);
         Logger.log("Session ID: " + session.getId(), LogLevel.Update);
-        Logger.log("Subscribing to topics...", LogLevel.SubscriptionUpdate);
+        Logger.log("Subscribing to topics...", LogLevel.Subscription_Update);
         subscribeToTopics();
     }
 

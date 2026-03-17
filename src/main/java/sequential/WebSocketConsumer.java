@@ -1,6 +1,5 @@
 package sequential;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -51,7 +50,7 @@ public class WebSocketConsumer {
                 if (session != null && session.isOpen()) {
                     String subscribeMessage = "topic:" + topic;
                     session.getBasicRemote().sendText(subscribeMessage);
-                    Logger.log("Subscribed to: " + topic, LogLevel.SuccessfulSubscription);
+                    Logger.log("Subscribed to: " + topic, LogLevel.Successful_Subscription);
                     // Tiny pause between messages to avoid flooding the socket buffer
                     Thread.sleep(50);
                 }
@@ -65,7 +64,7 @@ public class WebSocketConsumer {
     public void onMessage(String message, Session session) {
         try {
             if (!subscribeFlag.get()) {
-                Logger.log("Server ready. Subscribing to topics...", LogLevel.SubscriptionUpdate);
+                Logger.log("Server ready. Subscribing to topics...", LogLevel.Subscription_Update);
                 subscribeFlag.set(true);
                 subscribeToTopics();
             } else {
@@ -81,19 +80,7 @@ public class WebSocketConsumer {
         }
     }
 
-   /* private void subscribeToTopics() {
-        for (String topic : TOPICS) {
-            try {
-                String subscribeMessage = "topic:" + topic;
-                if (session != null && session.isOpen()) {
-                    session.getBasicRemote().sendText(subscribeMessage);
-                    Logger.log("Subscribed to: " + topic, LogLevel.SuccessfulSubscription);
-                }
-            } catch (IOException e) {
-                Logger.log("Error subscribing to " + topic, LogLevel.Error);
-            }
-        }
-    }*/
+
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
@@ -113,12 +100,9 @@ public class WebSocketConsumer {
 
             Logger.log("Connecting to WebSocket server...", LogLevel.Info);
 
-            // 1. Connect
             WebSocketConsumer consumer = new WebSocketConsumer();
             Session session = container.connectToServer(consumer, uri);
 
-            // 2. FORCE the main thread to stay alive until you manually stop it
-            // This prevents the "Session ended. Exiting..." message you saw.
             Logger.log("System online. Press Enter in this console to stop the app.", LogLevel.Info);
             new Scanner(System.in).nextLine();
 

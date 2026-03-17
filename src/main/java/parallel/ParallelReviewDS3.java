@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import util.CleanReviews;
 
 public class ParallelReviewDS3 {
 
@@ -97,11 +98,17 @@ public class ParallelReviewDS3 {
         }
     }
     private void processReview(String review) {
+        String reviewText = CleanReviews.extractReviewText(review);
+        String topic = CleanReviews.extractTopic(review);
+        String reviewerID = CleanReviews.extractField(review, "reviewerID");
+        String reviewerName = CleanReviews.extractField(review, "reviewerName");
+        String asin = CleanReviews.extractField(review, "asin");
+
         String input;
-        if(review.length() > 300){
-            input = review.substring(0, 300);
+        if(reviewText.length() > 300){
+            input = reviewText.substring(0, 300);
         }else{
-            input = review;
+            input = reviewText;
         }
 
         PipelineParallel pipeline = null;
@@ -115,12 +122,16 @@ public class ParallelReviewDS3 {
             int total = totalProcessed.incrementAndGet();
             long elapsed = System.currentTimeMillis() - startTime;
             double throughput = total / (elapsed / 1000.0);
-
             Logger.log("[" + Thread.currentThread().getName() + "]"
-                    + "\nReview: " + input
-                    + "\nSentiment: " + sentiment
-                    + "\nThroughput: " + String.format("%.2f", throughput) + " reviews/sec"
-                    + " | Total: " + total, LogLevel.Success);
+                    + "\n#" + total + " | Time elapsed: " + (elapsed / 1000) + "s"
+                    + "\nTopic: " + topic + " | Product (ASIN): " + asin
+                    + " | Reviewer: " + reviewerName + " (" + reviewerID + ")"
+                    + "\nReview: " + input, LogLevel.Success);
+
+            Logger.log("Sentiment: " + sentiment, LogLevel.Sentiment);
+
+
+
         }catch (OutOfMemoryError e){
             Logger.log("[" + Thread.currentThread().getName() + "] OOM, skipping review");
 
@@ -159,7 +170,9 @@ public class ParallelReviewDS3 {
                 + " reviews/sec | Total processed: " + totalProcessed.get(), LogLevel.Update);
     }
 
-    //get the total memory used by init of a pipeline
+
+
+    /*get the total memory used by init of a pipeline
     public static void main(String[] args) {
         Runtime runtime = Runtime.getRuntime();
         for (int i = 0; i < 6; i++) {
@@ -170,7 +183,7 @@ public class ParallelReviewDS3 {
             long cost = (after - before) / (1024 * 1024);
             System.out.println("Pipeline " + (i + 1) + " cost: " + cost + "MB");
         }
-    }
+    }*/
 
 
 }
