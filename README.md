@@ -75,9 +75,8 @@ Distributed mode requires MPJ Express to be installed and configured:
 2. Set the `MPJ_HOME` environment variable to your install directory
 3. Add `%MPJ_HOME%\bin` to your system PATH
 4. Update the `systemPath` in `pom.xml` to match your local install:
-~~~xml
+
 <systemPath>C:/mpjexpress/lib/mpj.jar</systemPath>
-~~~
 
 **If `MPJ_HOME` is set:**
 ```bash mpjrun.bat -np 8 -Xmx6g -cp "SentimentAnalysis2-1.0-SNAPSHOT-jar-with-dependencies.jar; SentimentApp distributed-mpi
